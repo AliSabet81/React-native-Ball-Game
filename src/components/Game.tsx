@@ -1,12 +1,37 @@
-import { StyleSheet, SafeAreaView, View } from "react-native";
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Button,
+  useWindowDimensions,
+} from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 
-import { boardHeight } from "@/constants";
+import { BallData } from "@/types";
+import { GameContext } from "@/GameContext";
+import { ballRadius, boardHeight } from "@/constants";
+
+import Ball from "./Ball";
 
 const Game = () => {
+  const { width } = useWindowDimensions();
+
+  const ball = useSharedValue<BallData>({
+    x: width / 2,
+    y: boardHeight - ballRadius,
+    r: ballRadius,
+    dx: -1,
+    dy: -1,
+  });
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.board}></View>
-    </SafeAreaView>
+    <GameContext.Provider value={{ ball }}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.board}>
+          <Ball />
+        </View>
+      </SafeAreaView>
+    </GameContext.Provider>
   );
 };
 

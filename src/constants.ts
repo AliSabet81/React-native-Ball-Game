@@ -1,5 +1,5 @@
-import { Dimensions } from 'react-native';
-const width = Dimensions.get('window').width;
+import { Dimensions } from "react-native";
+const width = Dimensions.get("window").width;
 
 export const ballRadius = 5;
 export const ballSpeed = 600;
