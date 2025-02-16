@@ -8,9 +8,10 @@ import { useWindowDimensions } from "react-native";
 
 import { useGameContext } from "@/GameContext";
 import { ballSpeed, boardHeight } from "@/constants";
+import { getResetPositionAndDirection } from "@/utils";
 
 const Ball = () => {
-  const { ball, isUserTurn, onEndTurn } = useGameContext();
+  const { ball, isUserTurn, onEndTurn, blocks } = useGameContext();
 
   const { width } = useWindowDimensions();
 
@@ -47,6 +48,21 @@ const Ball = () => {
       dy,
       dx,
     };
+
+    blocks!.modify((blocks) => {
+      blocks
+        .filter((block) => block.val > 0)
+        .some((block) => {
+          const newBallData = getResetPositionAndDirection(ball!.value, block);
+          if (newBallData) {
+            ball!.value = newBallData;
+            block.val -= 1;
+            return true;
+          }
+        });
+
+      return blocks;
+    });
   }, false);
 
   const startFrameCallback = (val: boolean) => {

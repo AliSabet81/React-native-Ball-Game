@@ -111,7 +111,6 @@ const Game = () => {
               ]}
             />
           </View>
-          <Button title="Move" onPress={() => (isUserTurn.value = false)} />
         </SafeAreaView>
       </GestureDetector>
     </GameContext.Provider>
