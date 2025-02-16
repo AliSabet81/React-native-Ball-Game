@@ -5,7 +5,11 @@ import {
   Button,
   useWindowDimensions,
 } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import { BallData } from "@/types";
 import { GameContext } from "@/GameContext";
@@ -24,13 +28,80 @@ const Game = () => {
     dy: -1,
   });
 
+  const isUserTurn = useSharedValue(true);
+
+  const onEndTurn = () => {
+    "worklet";
+    if (isUserTurn.value) {
+      return;
+    }
+    isUserTurn.value = true;
+  };
+
+  const pan = Gesture.Pan()
+    .onUpdate((e) => {
+      if (!isUserTurn.value) {
+        return;
+      }
+
+      const x = e.translationX;
+      const y = e.translationY;
+
+      const mag = Math.sqrt(x * x + y * y);
+
+      ball.value = {
+        ...ball.value,
+        dx: -x / mag,
+        dy: -y / mag,
+      };
+    })
+    .onEnd(() => {
+      if (ball.value.dy < 0) {
+        isUserTurn.value = false;
+      }
+    });
+
+  const pathStyle = useAnimatedStyle(() => {
+    const { x, y, dx, dy } = ball.value;
+    const angle = Math.atan2(-dx, dy);
+
+    return {
+      display: isUserTurn.value ? "flex" : "none",
+      top: y,
+      left: x,
+      transform: [
+        {
+          rotate: `${angle}rad`,
+        },
+      ],
+    };
+  });
+
   return (
-    <GameContext.Provider value={{ ball }}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.board}>
-          <Ball />
-        </View>
-      </SafeAreaView>
+    <GameContext.Provider value={{ ball, isUserTurn, onEndTurn }}>
+      <GestureDetector gesture={pan}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.board}>
+            <Ball />
+
+            <Animated.View
+              style={[
+                {
+                  width: 0,
+                  height: 1000,
+                  borderWidth: 1,
+                  borderColor: "#ffffff99",
+                  borderStyle: "dotted",
+                  position: "absolute",
+                  transformOrigin: "top-center",
+                },
+                pathStyle,
+              ]}
+            />
+          </View>
+          <Button title="Move" onPress={() => (isUserTurn.value = false)} />
+        </SafeAreaView>
+      </GestureDetector>
     </GameContext.Provider>
   );
 };
