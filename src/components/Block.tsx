@@ -1,14 +1,13 @@
-import { useGameContext } from "@/GameContext";
-import { BlockData } from "@/types";
 import Animated, {
   runOnJS,
-  SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { Text } from "react-native";
 import { useState } from "react";
+import { Text } from "react-native";
+
+import { useGameContext } from "@/GameContext";
 
 export default function Block({ index }: { index: number }) {
   const { blocks } = useGameContext();
@@ -31,7 +30,7 @@ export default function Block({ index }: { index: number }) {
       };
     }
 
-    const { w, x, y, val } = block;
+    const { w, x, y } = block;
 
     return {
       display: "flex",
