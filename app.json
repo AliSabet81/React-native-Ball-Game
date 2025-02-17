@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1d1f05e2-8d98-4694-a70a-eff48a6d91bd"
+      }
+    },
+    "owner": "alisabet"
   }
 }
